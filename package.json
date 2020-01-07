@@ -7,5 +7,12 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Jonathan Grunder",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "request": "^2.88.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Jonathan57500/kimsufi-alert.git"
+  }
 }

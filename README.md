@@ -16,5 +16,5 @@ npm install
 ```
 Update the file config.json with your settings
 ```
-npm start
+npm start service.js
 ```
