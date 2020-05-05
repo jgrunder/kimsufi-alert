@@ -6,7 +6,15 @@ var _servers = require('./servers.json');
 const AVAIL_URL = 'https://www.ovh.com/engine/api/dedicated/server/availabilities?country=fr&hardware=';
 
 console.log('New instance of Kimsufi Alert');
-console.log(_servers);
+
+_servers = _servers.filter(function(s) {
+  return s.monitor === true;
+});
+
+if(Object.keys(_servers).length < 1) {
+  console.log('No server to monitor, this application will now stop. Please select at least one server to monitor in servers.json');
+  process.exit()
+}
 
 var interval = setInterval(isAvailable, 10000, _servers);
 
@@ -14,9 +22,10 @@ function isAvailable(servers)
 {
   for(var server in _servers)
   {
-    if(!_servers[server]) continue;
-    console.log('Is server "' + server + '" available?');
-    request(AVAIL_URL + server, function (error, response, body) {
+    var name = _servers[server].name;
+    var code = _servers[server].code;
+    console.log('Is server "' + code + '" available?');
+    request(AVAIL_URL + code, function (error, response, body) {
       var jsonContent = JSON.parse(body);
       for(var cluster in jsonContent)
       {
@@ -47,14 +56,28 @@ function isAvailable(servers)
 
 function serverAvailable(datacenter, server)
 {
-  console.log('The server ' + server + ' is available in datacenter ' + datacenter.datacenter + ' with code ' + datacenter.availability);
-  const index = _servers.indexOf(server);
-  if (index > -1) {
-    _servers.splice(index, 1);
+  if(config.pushover.enabled)
+  {
+    alertByPushover(datacenter, server)
   }
-  if(_servers.length < 1) {
+  if(config.sendmail.enabled)
+  {
+    alertByMail(datacenter, server)
+  }
+  delete _servers.server;
+  if(Object.keys(_servers).length < 1) {
     clearInterval(interval);
   }
+}
 
-  console.log(_servers);
+function alertByMail(datacenter, server)
+{
+  console.log('The server ' + server + ' is available in datacenter ' + datacenter.datacenter + ' with code ' + datacenter.availability);
+  console.log('Mail notification sent');
+}
+
+function alertByPushover(datacenter, server)
+{
+  console.log('The server ' + server + ' is available in datacenter ' + datacenter.datacenter + ' with code ' + datacenter.availability);
+  console.log('Pushover notification sent');
 }
