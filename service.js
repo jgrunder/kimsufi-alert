@@ -1,22 +1,20 @@
 // module variables
 const config = require('./config.json');
 const request = require('request');
+var _servers = require('./servers.json');
 
 const AVAIL_URL = 'https://www.ovh.com/engine/api/dedicated/server/availabilities?country=fr&hardware=';
 
 console.log('New instance of Kimsufi Alert');
-
-var _servers = config.servers;
-
 console.log(_servers);
 
 var interval = setInterval(isAvailable, 10000, _servers);
 
 function isAvailable(servers)
 {
-  for(var data in _servers)
+  for(var server in _servers)
   {
-    var server = _servers[data];
+    if(!_servers[server]) continue;
     console.log('Is server "' + server + '" available?');
     request(AVAIL_URL + server, function (error, response, body) {
       var jsonContent = JSON.parse(body);
