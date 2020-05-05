@@ -9,6 +9,7 @@
   "author": "Jonathan Grunder",
   "license": "MIT",
   "dependencies": {
+    "nodemailer": "^6.4.6",
     "request": "^2.88.0"
   },
   "repository": {
