@@ -1,9 +1,12 @@
 // module variables
 const config = require('./config.json');
 const request = require('request');
+const nodemailer = require('nodemailer');
+
 var _servers = require('./servers.json');
 
 const AVAIL_URL = 'https://www.ovh.com/engine/api/dedicated/server/availabilities?country=fr&hardware=';
+const BUY_URL = 'https://www.kimsufi.com/fr/commande/kimsufi.xml?reference=';
 
 console.log('New instance of Kimsufi Alert');
 
@@ -109,8 +112,41 @@ function serverAvailable(datacenter, server)
  */
 function alertByMail(datacenter, server)
 {
-  console.log('The server ' + server + ' is available in datacenter ' + datacenter.datacenter + ' with code ' + datacenter.availability);
-  console.log('Mail notification sent');
+  // Retrieve all configuration variables
+  let smtp = config.sendmail.mail_smtp;
+  let user = config.sendmail.mail_user;
+  let pass = config.sendmail.mail_pass;
+  let dest = config.sendmail.mail_dest;
+  // If any of these var is not set, return
+  if(smtp == '' || user == '' || pass == '' || dest == '')
+  {
+    console.log('All configuration options for mail are required, cancel "alertByMail" function');
+    return;
+  }
+
+  // Set transporter with authentication data
+  var transporter = nodemailer.createTransport({
+    service: smtp,
+    auth: {
+      user: user,
+      pass: pass
+    }
+  });
+  // Set options like dest, subject and body
+  var mailOptions = {
+    from: user,
+    to: dest,
+    subject: 'Your Kimsufi server is available!',
+    text: 'Hurry up! The Kimsufi server "' + server + '" is available for now in the datacenter "' + datacenter.datacenter + '"! You will not receive any new notification for this server. To buy this server, copy/past this url: ' + BUY_URL + server
+  };
+  // Send the mail and console the result
+  transporter.sendMail(mailOptions, function(error, info){
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email sent: ' + info.response);
+    }
+  });
 }
 
 /**
