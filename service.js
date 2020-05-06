@@ -142,7 +142,8 @@ function alertByMail(datacenter, server)
     from: user,
     to: dest,
     subject: 'Your Kimsufi server is available!',
-    text: 'Hurry up! The Kimsufi server "' + server + '" is available for now in the datacenter "' + datacenter.datacenter + '"! You will not receive any new notification for this server. To buy this server, copy/past this url: ' + BUY_URL + server
+    text: 'Hurry up! The Kimsufi server "' + server + '" is available for now in the datacenter "' + datacenter.datacenter + '"! You will not receive any new notification for this server. To buy this server, copy/past this url: ' + BUY_URL + server,
+    html: '<p>Hello,<br/>Hurry up! The Kimsufi server "' + server + '" is available for now in the datacenter "' + datacenter.datacenter + '"!<br/>You will not receive any new notification for this server. To buy this server, click or copy/past this url: ' + BUY_URL + server + '</p><p>We hope you enjoyed this Kimsufi Alert service :-)</p>'
   };
   // Send the mail and console the result
   transporter.sendMail(mailOptions, function(error, info){
