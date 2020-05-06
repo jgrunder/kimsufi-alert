@@ -21,6 +21,8 @@ if(Object.keys(_servers).length < 1) {
   process.exit()
 }
 
+// Launch the main function one time at start
+isAvailable(_servers);
 // Set interval, we call the function while there is at least one server to monitor
 var interval = setInterval(isAvailable, 10000, _servers);
 
