@@ -2,6 +2,7 @@
 const config = require('./config.json');
 const request = require('request');
 const nodemailer = require('nodemailer');
+const Push = require( 'pushover-notifications' )
 
 var _servers = require('./servers.json');
 
@@ -89,6 +90,7 @@ function isAvailable(servers)
  */
 function serverAvailable(datacenter, server)
 {
+  console.log('Server "' + server + '" is available, sending notifications');
   if(config.pushover.enabled)
   {
     alertByPushover(datacenter, server)
@@ -104,8 +106,7 @@ function serverAvailable(datacenter, server)
   }
   // If the server list is empty, we clear the interval and exit application
   if(Object.keys(_servers).length < 1) {
-    clearInterval(interval); // TODO: Useless?
-    process.exit()
+    clearInterval(interval);
   }
 }
 
@@ -163,6 +164,24 @@ function alertByMail(datacenter, server)
  */
 function alertByPushover(datacenter, server)
 {
-  console.log('The server ' + server + ' is available in datacenter ' + datacenter.datacenter + ' with code ' + datacenter.availability);
-  console.log('Pushover notification sent');
+  var p = new Push( {
+    user: config.pushover.pushover_user_key,
+    token: config.pushover.pushover_app_key
+  })
+
+  var msg = {
+    // These values correspond to the parameters detailed on https://pushover.net/api
+    // 'message' is required. All other values are optional.
+    html: 1,
+    title: "Your Kimsufi server is available!",
+    message: 'Hello,<br/>Hurry up! The Kimsufi server "' + server + '" is available for now in the datacenter "' + datacenter.datacenter + '"!<br/>You will not receive any new notification for this server. To buy this server, click or copy/past this url: <a href="' + BUY_URL + server + '">' + BUY_URL + server + '</a><br/><br/>We hope you enjoyed this Kimsufi Alert service :-)'
+  }
+
+  p.send( msg, function( err, result ) {
+    if ( err ) {
+      throw err
+    }
+
+    console.log( result )
+  })
 }
