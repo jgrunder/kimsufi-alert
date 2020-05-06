@@ -98,7 +98,10 @@ function serverAvailable(datacenter, server)
     alertByMail(datacenter, server)
   }
   // Removing the server from the monitored list
-  delete _servers.server;
+  const index = _servers.findIndex(_servers => _servers.code === server);
+  if (index > -1) {
+    _servers.splice(index, 1);
+  }
   // If the server list is empty, we clear the interval and exit application
   if(Object.keys(_servers).length < 1) {
     clearInterval(interval); // TODO: Useless?
