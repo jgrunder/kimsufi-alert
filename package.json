@@ -4,7 +4,8 @@
   "description": "This application allows you to monitor in real time the availability of one or more Kimsufi servers and receive a notification via several systems (currently Pushover and mail).",
   "main": "service.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node service.js"
   },
   "author": "Jonathan Grunder",
   "license": "MIT",
