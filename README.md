@@ -25,6 +25,20 @@ npm install
 node service.js
 ```
 
+## Kimsufi Alert as a service (Linux)
+
+This application comes with two configuration files to make Kimsufi Alert a service under Linux.
+To do so, you must place the two files below in your system and change the path to the Kimsufi Alert application.
+
+- File `kimsufi-alert.service` must be moved to your `/etc/systemd/system` folder (this is for Debian dist, you can easily find any equivalent for your dist)
+- (Optional) File `kimsufialert.conf` must be moved to your `/etc/rsyslog.d` only if you want to separate Kimsufi Alert application logs from system logs (the log file must exists and be writable by the system agent, you can use `chown :adm`)
+- In both files, replace the /PATH/TO to the absolute path to the application and to the log file
+```
+systemctl enable kimsufi-alert
+systemctl restart rsyslog
+systemctl start kimsufi-alert
+```
+
 ## Gmail configuration
 
 To use the service with email via Gmail (you must have a valid Gmail account and email address), we recommend that you create a Google application password so that you don't have to write your Google password in plaintext in the configuration file.
