@@ -1,32 +1,32 @@
 // module variables
-const config = require('./config.json');
-const request = require('request');
-const nodemailer = require('nodemailer');
+const config = require('./config.json')
+const request = require('request')
+const nodemailer = require('nodemailer')
 const Push = require( 'pushover-notifications' )
 const PushBullet = require('pushbullet')
 
-var _servers = require('./servers.json');
+var _servers = require('./servers.json')
 
-const AVAIL_URL = 'https://www.ovh.com/engine/api/dedicated/server/availabilities?country=fr&hardware=';
-const BUY_URL = 'https://www.kimsufi.com/fr/commande/kimsufi.xml?reference=';
+const AVAIL_URL = 'https://www.ovh.com/engine/api/dedicated/server/availabilities?country=fr&hardware='
+const BUY_URL = 'https://www.kimsufi.com/fr/commande/kimsufi.xml?reference='
 
-console.log('New instance of Kimsufi Alert');
+console.log('New instance of Kimsufi Alert')
 
 // Apply a filter to only get the servers to monitor
 _servers = _servers.filter(function(s) {
-  return s.monitor === true;
-});
+  return s.monitor === true
+})
 
 // Security: stop application if there is no server to monitor
 if(Object.keys(_servers).length < 1) {
-  console.log('No server to monitor, this application will now stop. Please select at least one server to monitor in servers.json');
+  console.log('No server to monitor, this application will now stop. Please select at least one server to monitor in servers.json')
   process.exit()
 }
 
 // Launch the main function one time at start
-isAvailable(_servers);
+isAvailable(_servers)
 // Set interval, we call the function while there is at least one server to monitor
-var interval = setInterval(isAvailable, 60000, _servers);
+var interval = setInterval(isAvailable, 60000, _servers)
 
 /**
  * This function is the main function of the programm, it is called
@@ -44,42 +44,42 @@ function isAvailable(servers)
   for(var server in _servers)
   {
     // Get comon data from the server object
-    var name = _servers[server].name;
-    var code = _servers[server].code;
-    console.log('Is server "' + code + '" available?');
+    var name = _servers[server].name
+    var code = _servers[server].code
+    console.log('Is server "' + code + '" available?')
     // HTTP request to OVH api with the server code
     request(AVAIL_URL + code, function (error, response, body) {
-      var jsonContent = JSON.parse(body);
+      var jsonContent = JSON.parse(body)
       // First loop on each cluster (Europe, NA, etc.)
       for(var cluster in jsonContent)
       {
-        var region = jsonContent[cluster];
+        var region = jsonContent[cluster]
         // At this time we only check Europe datacenters
         if(region.region == 'europe')
         {
-          var available = false;
+          var available = false
           // Set a new variable used into notifications and logs
-          var hardware = region.hardware;
+          var hardware = region.hardware
           // Second loop on each datacenter from the cluster
           for(var datacenterNb in region.datacenters)
           {
             // New datacenter var that contains the data to check
-            var datacenter = region.datacenters[datacenterNb];
+            var datacenter = region.datacenters[datacenterNb]
             // Exclude default datacenter because it is set to true regardless of the datacenter where the server is available
             if(datacenter.availability != 'unavailable' && datacenter.datacenter != 'default')
             {
               // Call the function that will remove this server from the monitored list and send notifications
-              serverAvailable(datacenter, hardware);
-              available = true;
+              serverAvailable(datacenter, hardware)
+              available = true
             }
           }
           if(!available)
           {
-              console.log('Server "' + hardware + '" is not available');
+              console.log('Server "' + hardware + '" is not available')
           }
         }
       }
-    });
+    })
   }
 }
 
@@ -91,7 +91,7 @@ function isAvailable(servers)
  */
 function serverAvailable(datacenter, server)
 {
-  console.log('Server "' + server + '" is available, sending notifications');
+  console.log('Server "' + server + '" is available, sending notifications')
   if(config.pushbullet.enabled)
   {
     alertByPushBullet(datacenter, server)
@@ -105,13 +105,13 @@ function serverAvailable(datacenter, server)
     alertByMail(datacenter, server)
   }
   // Removing the server from the monitored list
-  const index = _servers.findIndex(_servers => _servers.code === server);
+  const index = _servers.findIndex(_servers => _servers.code === server)
   if (index > -1) {
-    _servers.splice(index, 1);
+    _servers.splice(index, 1)
   }
   // If the server list is empty, we clear the interval and exit application
   if(Object.keys(_servers).length < 1) {
-    clearInterval(interval);
+    clearInterval(interval)
   }
 }
 
@@ -124,15 +124,15 @@ function serverAvailable(datacenter, server)
 function alertByMail(datacenter, server)
 {
   // Retrieve all configuration variables
-  let smtp = config.sendmail.mail_smtp;
-  let user = config.sendmail.mail_user;
-  let pass = config.sendmail.mail_pass;
-  let dest = config.sendmail.mail_dest;
+  let smtp = config.sendmail.mail_smtp
+  let user = config.sendmail.mail_user
+  let pass = config.sendmail.mail_pass
+  let dest = config.sendmail.mail_dest
   // If any of these var is not set, return
   if(smtp == '' || user == '' || pass == '' || dest == '')
   {
-    console.log('All configuration options for mail are required, cancel "alertByMail" function');
-    return;
+    console.log('All configuration options for mail are required, cancel "alertByMail" function')
+    return
   }
 
   // Set transporter with authentication data
@@ -142,7 +142,7 @@ function alertByMail(datacenter, server)
       user: user,
       pass: pass
     }
-  });
+  })
   // Set options like dest, subject and body
   var mailOptions = {
     from: user,
@@ -150,15 +150,15 @@ function alertByMail(datacenter, server)
     subject: 'Your Kimsufi server is available!',
     text: 'Hurry up! The Kimsufi server "' + server + '" is available for now in the datacenter "' + datacenter.datacenter + '"! You will not receive any new notification for this server. To buy this server, copy/past this url: ' + BUY_URL + server,
     html: '<p>Hello,<br/>Hurry up! The Kimsufi server "' + server + '" is available for now in the datacenter "' + datacenter.datacenter + '"!<br/>You will not receive any new notification for this server. To buy this server, click or copy/past this url: ' + BUY_URL + server + '</p><p>We hope you enjoyed this Kimsufi Alert service :-)</p>'
-  };
+  }
   // Send the mail and console the result
   transporter.sendMail(mailOptions, function(error, info){
     if (error) {
-      console.log(error);
+      console.log(error)
     } else {
-      console.log('Email sent: ' + info.response);
+      console.log('Email sent: ' + info.response)
     }
-  });
+  })
 }
 
 /**
@@ -210,5 +210,5 @@ function alertByPushBullet(datacenter, server)
       throw error
     }
     console.log(response)
-  });
+  })
 }
