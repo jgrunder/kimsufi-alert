@@ -22,7 +22,7 @@ npm install
 4. Specify which servers you want to monitor by editing the servers.json file. 
 5. Start the service:
 ```
-npm start service.js
+node service.js
 ```
 
 ## Gmail configuration
