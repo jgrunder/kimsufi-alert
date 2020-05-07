@@ -3,6 +3,7 @@ const config = require('./config.json');
 const request = require('request');
 const nodemailer = require('nodemailer');
 const Push = require( 'pushover-notifications' )
+const PushBullet = require('pushbullet')
 
 var _servers = require('./servers.json');
 
@@ -91,6 +92,10 @@ function isAvailable(servers)
 function serverAvailable(datacenter, server)
 {
   console.log('Server "' + server + '" is available, sending notifications');
+  if(config.pushbullet.enabled)
+  {
+    alertByPushBullet(datacenter, server)
+  }
   if(config.pushover.enabled)
   {
     alertByPushover(datacenter, server)
@@ -184,4 +189,26 @@ function alertByPushover(datacenter, server)
 
     console.log( result )
   })
+}
+
+/**
+ * We send a PushBullet notification to inform the user that the server is available in this datacenter
+ * @param  {[Object]} datacenter [The datacenter where the server is located]
+ * @param  {[String]} server     [The monitored server]
+ * @return {[Void]}
+ */
+function alertByPushBullet(datacenter, server)
+{
+
+  var pusher = new PushBullet(config.pushbullet.pushover_api_key)
+  var linkTitle = 'Your Kimsufi server is available!'
+  var linkBody = 'Hurry up! The Kimsufi server "' + server + '" is available for now in the datacenter "' + datacenter.datacenter + '"! You will not receive any new notification for this server. To buy this server, copy/past this url: ' + BUY_URL + server
+  var link = BUY_URL + server
+
+  pusher.link(config.pushbullet.pushover_devices, linkTitle, link, linkBody, function(error, response) {
+    if ( error ) {
+      throw error
+    }
+    console.log(response)
+  });
 }
