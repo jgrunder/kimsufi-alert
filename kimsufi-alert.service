@@ -1,0 +1,13 @@
+#!/bin/sh
+
+[Service]
+WorkingDirectory=/home/nodeuser/kimsufi-alert
+ExecStart=/usr/bin/npm start
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=kimsufialert
+User=nodeuser
+Group=nodeuser
+
+[Install]
+WantedBy=multi-user.target
