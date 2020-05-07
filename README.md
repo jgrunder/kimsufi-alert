@@ -16,11 +16,13 @@ You can currently receive notifications with the following systems:
 ```
 cd kimsufi-alert
 cp config.json.exemple config.json
+cp servers.update.json servers.json
 npm install
 ```
 3. Update the file config.json with your settings
-4. Specify which servers you want to monitor by editing the servers.json file. 
-5. Start the service:
+4. Update the file servers.json by setting the servers you want to monitor to true
+5. Specify which servers you want to monitor by editing the servers.json file.
+6. Start the service:
 ```
 node service.js
 ```
@@ -42,7 +44,7 @@ systemctl start kimsufi-alert
 ## Gmail configuration
 
 To use the service with email via Gmail (you must have a valid Gmail account and email address), we recommend that you create a Google application password so that you don't have to write your Google password in plaintext in the configuration file.
-Regardless of this security issue, you're required to use Google application password if you've enabled dual authentication on your Google Account. 
+Regardless of this security issue, you're required to use Google application password if you've enabled dual authentication on your Google Account.
 
 To do this :
 1. Manage your Google account
