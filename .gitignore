@@ -34,3 +34,4 @@ node_modules/
 
 # Application
 config.json
+servers.json
