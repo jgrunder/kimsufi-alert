@@ -7,6 +7,7 @@ If one of the monitored servers is available, you receive a notification with th
 
 You can currently receive notifications with the following systems:
 - [Pushover](https://pushover.net/)
+- [PushBullet](https://www.pushbullet.com/)
 - Mail (Gmail)
 
 ## Getting Started
