@@ -73,7 +73,7 @@ function isAvailable(servers)
               available = true
             }
           }
-          if(!available)
+          if(!available && config.app_debug)
           {
               console.log('Server "' + hardware + '" is not available')
           }
@@ -111,6 +111,7 @@ function serverAvailable(datacenter, server)
   }
   // If the server list is empty, we clear the interval and exit application
   if(Object.keys(_servers).length < 1) {
+    console.log("No more server to monitor, shutting down...")
     clearInterval(interval)
   }
 }
@@ -154,7 +155,7 @@ function alertByMail(datacenter, server)
   // Send the mail and console the result
   transporter.sendMail(mailOptions, function(error, info){
     if (error) {
-      console.log(error)
+      throw error
     } else {
       console.log('Email sent: ' + info.response)
     }

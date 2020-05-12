@@ -1,4 +1,5 @@
 {
+  "app_debug": false,
   "pushbullet": {
     "enabled": false,
     "pushover_devices": [],
