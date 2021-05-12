@@ -10,7 +10,7 @@
   "author": "Jonathan Grunder",
   "license": "MIT",
   "dependencies": {
-    "nodemailer": "^6.4.6",
+    "nodemailer": "^6.4.16",
     "pushbullet": "^2.4.0",
     "pushover-notifications": "^1.2.2",
     "request": "^2.88.0"
