@@ -1,5 +1,6 @@
 {
   "app_debug": false,
+  "check_timer": 60,
   "pushbullet": {
     "enabled": false,
     "test": false,

@@ -11,6 +11,7 @@ const AVAIL_URL = 'https://www.ovh.com/engine/api/dedicated/server/availabilitie
 const BUY_URL = 'https://www.kimsufi.com/fr/commande/kimsufi.xml?reference='
 
 const debug_enabled = config.app_debug
+const check_timer = config.check_timer
 
 console.log('New instance of Kimsufi Alert')
 
@@ -30,7 +31,7 @@ console.log("Starting monitoring for the following server(s): ")
 console.log(_servers)
 isAvailable(_servers)
 // Set interval, we call the function while there is at least one server to monitor
-var interval = setInterval(isAvailable, 60000, _servers)
+var interval = setInterval(isAvailable, check_timer * 1000, _servers)
 
 /**
  * This function is the main function of the programm, it is called
@@ -98,7 +99,7 @@ function isAvailable(servers)
           }
           if(!available && debug_enabled)
           {
-              console.log('Server "' + hardware + '" is not available, waiting 60 sec for the next online check')
+              console.log('Server "' + hardware + '" is not available, waiting ' + check_timer + ' sec for the next online check')
           }
         }
       }
