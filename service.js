@@ -43,7 +43,7 @@ var interval = setInterval(isAvailable, 60000, _servers)
 function isAvailable(servers)
 {
   // Loop on each server to monitor
-  for(var server in _servers)
+  for(var server in servers)
   {
     // Get comon data from the server object
     var name = _servers[server].name
