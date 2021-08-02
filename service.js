@@ -10,6 +10,8 @@ var _servers = require('./servers.json')
 const AVAIL_URL = 'https://www.ovh.com/engine/api/dedicated/server/availabilities?country=fr&hardware='
 const BUY_URL = 'https://www.kimsufi.com/fr/commande/kimsufi.xml?reference='
 
+const debug_enabled = config.app_debug
+
 console.log('New instance of Kimsufi Alert')
 
 // Apply a filter to only get the servers to monitor
@@ -48,7 +50,7 @@ function isAvailable(servers)
     // Get comon data from the server object
     var name = _servers[server].name
     var code = _servers[server].code
-    if(config.app_debug)
+    if(debug_enabled)
     {
       console.log('Is server "' + code + '" available?')
     }
@@ -94,7 +96,7 @@ function isAvailable(servers)
               available = true
             }
           }
-          if(!available && config.app_debug)
+          if(!available && debug_enabled)
           {
               console.log('Server "' + hardware + '" is not available, waiting 60 sec for the next online check')
           }
