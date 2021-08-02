@@ -96,7 +96,7 @@ function isAvailable(servers)
           }
           if(!available && config.app_debug)
           {
-              console.log('Server "' + hardware + '" is not available')
+              console.log('Server "' + hardware + '" is not available, waiting 60 sec for the next online check')
           }
         }
       }
