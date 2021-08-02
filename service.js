@@ -24,6 +24,8 @@ if(Object.keys(_servers).length < 1) {
 }
 
 // Launch the main function one time at start
+console.log("Starting monitoring for the following server(s): ")
+console.log(_servers)
 isAvailable(_servers)
 // Set interval, we call the function while there is at least one server to monitor
 var interval = setInterval(isAvailable, 60000, _servers)
@@ -46,22 +48,25 @@ function isAvailable(servers)
     // Get comon data from the server object
     var name = _servers[server].name
     var code = _servers[server].code
-    console.log('Is server "' + code + '" available?')
+    if(config.app_debug)
+    {
+      console.log('Is server "' + code + '" available?')
+    }
     // If test is set to true, we send the notification without online check
     if(config.pushbullet.test)
     {
-      alertByPushBullet({datacenter: "TEST DATACENTER"}, name);
-      return;
+      alertByPushBullet({datacenter: "TEST DATACENTER"}, name)
+      return
     }
     if(config.pushover.test)
     {
-      alertByPushover({datacenter: "TEST DATACENTER"}, name);
-      return;
+      alertByPushover({datacenter: "TEST DATACENTER"}, name)
+      return
     }
     if(config.sendmail.test)
     {
-      alertByMail({datacenter: "TEST DATACENTER"}, name);
-      return;
+      alertByMail({datacenter: "TEST DATACENTER"}, name)
+      return
     }
     // HTTP request to OVH api with the server code
     request(AVAIL_URL + code, function (error, response, body) {
